@@ -21,74 +21,71 @@ namespace UserContact
                 {
                     ContactInfo[num] = args[i];
                 }
+                /* Не могу понять, почему без закомментированной части всё работает, стоит только раскомментировать
+                 * и ввести один из аргументов неправильно - работает некорректно
+                 * (логин вводится в одинарных кавычках: 'iov1223')
+                else
+                {
+                    ContactInfo[num] = "Неверный ввод данных.";
+                }*/
             }
             Console.WriteLine(text + ContactInfo[num]);
+        }
+        public void IfEmptyArgs()
+        {
+            Console.WriteLine("Введите данные пользователя (IP-адрес, электронная почта, дата регистрации, имя в сети) в произвольном порядке:");
+            for (int i = 0; i < ContactInfo.Length; i++)
+            {
+                ContactInfo[i] = Console.ReadLine();
+            }
+            ContactINFO _contact = new ContactINFO();
+
+            string text = "1) Логин в системе: ";
+            var regex_NAME = @"\'";
+            _contact.SortArgs(ContactInfo, regex_NAME, 0, text);
+
+            text = "2) IP-адрес: ";
+            var regex_IP = @"\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
+            _contact.SortArgs(ContactInfo, regex_IP, 1, text);
+
+            text = "3) Адрес эл.почты: ";
+            var regex_EMAIL = @"(\w*@\w*[.]\w*)|(\w*[.]\w*@\w*[.]\w*)";
+            _contact.SortArgs(ContactInfo, regex_EMAIL, 2, text);
+
+            text = "4) Дата заключения договора: ";
+            var regex_DATE = @"(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}";
+            _contact.SortArgs(ContactInfo, regex_DATE, 3, text);
         }
     }
 
     internal class Program
     {
         static void Main(string[] args)
-        {
-            /* ContactINFO _contact = new ContactINFO();
-             string RE_email = @"\w*@\w*[.]\w*";
-             string text = "1) Логин в системе: ";
-             _contact.SortArgs(args, RE_email, 2, text);
-             string RE_ip = @"\w*[.]\w*[.]\w*[.]\w*";
-             text = "2) IP-адрес: ";
-             _contact.SortArgs(args, RE_ip, 1, text);
-             string RE_date = @"\w*[.]\w*[.]\w*";
-             text = "3) Адрес эл.почты: ";
-             _contact.SortArgs(args, RE_date, 3, text);
-             string RE_name = @"\'";
-             text = "4) Дата заключения договора: ";
-             _contact.SortArgs(args, RE_name, 0, text);*/
-            string[] ContactInfo = new string[4];
+        { 
+            ContactINFO _contact = new ContactINFO();
+            if (args.Length == 4)
+            {
+                string text = "1) Логин в системе: ";
+                var regex_NAME = @"\'";
+                _contact.SortArgs(args, regex_NAME, 0, text);
 
-            string RE_email = @"\w*@\w*[.]\w*";
-            Regex regex = new Regex(RE_email, RegexOptions.IgnoreCase);
-            for (int i = 0; i < args.Length; i++)
-            {
-                MatchCollection matches = regex.Matches(args[i]);
-                if (matches.Count > 0)
-                {
-                    ContactInfo[2] = args[i];
-                }
+                text = "2) IP-адрес: ";
+                var regex_IP = @"\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
+                _contact.SortArgs(args, regex_IP, 1, text);
+
+                text = "3) Адрес эл.почты: ";
+                var regex_EMAIL = @"(\w*@\w*[.]\w*)|(\w*[.]\w*@\w*[.]\w*)";
+                _contact.SortArgs(args, regex_EMAIL, 2, text);
+
+                text = "4) Дата заключения договора: ";
+                var regex_DATE = @"(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}";
+                _contact.SortArgs(args, regex_DATE, 3, text);
             }
-            string RE_ip = @"\w*[.]\w*[.]\w*[.]\w*";
-            regex = new Regex(RE_ip, RegexOptions.IgnoreCase);
-            for (int i = 0; i < args.Length; i++)
+            else
             {
-                MatchCollection matches = regex.Matches(args[i]);
-                if (matches.Count > 0)
-                {
-                    ContactInfo[1] = args[i];
-                }
+                _contact.IfEmptyArgs();
             }
-            string RE_date = @"\w*[.]\w*[.]\w*";
-            regex = new Regex(RE_date, RegexOptions.IgnoreCase);
-            for (int i = 0; i < args.Length; i++)
-            {
-                MatchCollection matches = regex.Matches(args[i]);
-                if (matches.Count > 0)
-                {
-                    ContactInfo[3] = args[i];
-                }
-            }
-            string RE_name = @"\'";
-            regex = new Regex(RE_name, RegexOptions.IgnoreCase);
-            for (int i = 0; i < args.Length; i++)
-            {
-                MatchCollection matches = regex.Matches(args[i]);
-                if (matches.Count > 0)
-                {
-                    ContactInfo[0] = args[i];
-                }
-            }
-            Console.WriteLine("{0}) Логин в системе: {1}", 1, ContactInfo[0]);
-            Console.WriteLine("{0}) IP-адрес: {1}", 2, ContactInfo[1]);
-            Console.WriteLine("{0}) Адрес эл.почты: {1}", 3, ContactInfo[2]);
-            Console.WriteLine("{0}) Дата заключения договора: {1}", 4, ContactInfo[3]);
+          
         }
     }
 }
